@@ -15,6 +15,7 @@ import {
   FaServer,
   FaKey
 } from "react-icons/fa"
+import Image from "next/image";
 
 type Project = {
   id: number
@@ -23,6 +24,7 @@ type Project = {
   github: string
   technologies: string
   icon: string
+  image: string
 }
 
 const icons: Record<string, any> = {
@@ -35,7 +37,7 @@ const icons: Record<string, any> = {
 }
 
 const breakpointColumnsObj = {
-  default: 3,
+  default: 4,
   1024: 2,
   640: 1
 }
@@ -64,7 +66,7 @@ export default function ProjectsPage() {
         <Navbar />
 
         <div className="bg-blend-hue text-white px-6 py-16">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
 
             <motion.h1
                 initial={{ opacity: 0, y: -40 }}
@@ -98,6 +100,18 @@ export default function ProjectsPage() {
                         whileHover={{ scale: 1.03 }}
                         className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-green-500 transition"
                     >
+                      {
+                        project.image ? <div className="relative w-full h-40 rounded-xl overflow-hidden bg-neutral-900/30 border border-green-500/10 mb-5">
+                          <Image
+                              src={project.image ? project.image : "/fallback-project.png"}
+                              alt={project.title}
+                              fill
+                              sizes="(max-width: 1024px) 100vw, 33vw"
+                              className="object-cover"
+                              priority={false}
+                          />
+                        </div> : ""
+                      }
 
                       <h2 className="text-xl font-semibold mb-3 flex items-center gap-3">
                         <Icon className="text-green-400 text-lg" />

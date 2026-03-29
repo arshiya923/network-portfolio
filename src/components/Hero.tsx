@@ -77,7 +77,7 @@ export default function Hero() {
                                 alt="avatar"
                                 width={220}
                                 height={220}
-                                className="rounded-full"
+                                className="rounded-full p-1.5"
                                 priority
                             />
 
@@ -91,7 +91,7 @@ export default function Hero() {
                 <div className="max-w-xl">
 
                     <h1 className="text-5xl font-bold text-green-400 leading-tight drop-shadow-[0_0_15px_rgba(34,197,94,0.9)]">
-                        Full Stack
+                        Full Stack &
                         <br />
                         Network Engineer
                     </h1>

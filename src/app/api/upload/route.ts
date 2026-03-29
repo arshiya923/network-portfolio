@@ -1,25 +1,26 @@
-import { writeFile } from "fs/promises"
 import { NextResponse } from "next/server"
+import { writeFile } from "fs/promises"
 import path from "path"
 
 export async function POST(req: Request) {
+
   const data = await req.formData()
   const file: File | null = data.get("file") as unknown as File
 
   if (!file) {
-    return NextResponse.json({ success: false })
+    return NextResponse.json({ error: "No file uploaded" }, { status: 400 })
   }
 
   const bytes = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
 
-  const filename = Date.now() + "-" + file.name
-  const filepath = path.join(process.cwd(), "public/uploads", filename)
+  const fileName = Date.now() + "-" + file.name
 
-  await writeFile(filepath, buffer)
+  const filePath = path.join(process.cwd(), "public/uploads", fileName)
+
+  await writeFile(filePath, buffer)
 
   return NextResponse.json({
-    success: true,
-    path: "/uploads/" + filename
+    url: `/uploads/${fileName}`
   })
 }

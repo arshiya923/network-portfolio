@@ -15,11 +15,17 @@ export async function POST(req: Request) {
 
   const body = await req.json()
 
-  const { title, description, github, technologies } = body
+  const { title, description, github, technologies, image } = body
 
   await db.query(
-    "INSERT INTO projects (title, description, github, technologies) VALUES (?, ?, ?, ?)",
-    [title, description, github, JSON.stringify(technologies)]
+      "INSERT INTO projects (title, description, github, technologies, image) VALUES (?, ?, ?, ?, ?)",
+      [
+        title,
+        description,
+        github,
+        JSON.stringify(technologies),
+        image
+      ]
   )
 
   return NextResponse.json({
@@ -27,26 +33,3 @@ export async function POST(req: Request) {
   })
 }
 
-export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get("id")
-
-  await db.query("DELETE FROM projects WHERE id = ?", [id])
-
-  return Response.json({ success: true })
-}
-
-export async function PUT(req: Request) {
-  const body = await req.json()
-
-  const { id, title, description, github, technologies, icon, image } = body
-
-  await db.query(
-    `UPDATE projects 
-     SET title=?, description=?, github=?, technologies=?, icon=?, image=? 
-     WHERE id=?`,
-    [title, description, github, technologies, icon, image, id]
-  )
-
-  return Response.json({ success: true })
-}
