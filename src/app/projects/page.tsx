@@ -1,5 +1,7 @@
 "use client"
 
+import Navbar from "@/components/Navbar"
+import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import {
   FaNetworkWired,
@@ -48,23 +50,31 @@ export default function ProjectsPage() {
       </div>
     )
   }
-
+  const projectBaseDelayTime = 0.3;
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-16">
+    <>
+    <Navbar/>
+    <div className="bg-black text-white px-6 py-16">
       <div className="max-w-6xl mx-auto">
 
-        <h1 className="text-4xl font-bold mb-12 text-center">
+        <motion.h1 
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-4xl font-bold mb-12 text-center">
           My Projects
-        </h1>
+        </motion.h1>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => {
-
+          {projects.map((project, index) => {
             const Icon = icons[project.icon] || FaServer
             const techs = JSON.parse(project.technologies)
-
+            
             return (
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: -40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.1 , delay: projectBaseDelayTime * index}}
                 key={project.id}
                 className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-green-500 transition"
               >
@@ -97,12 +107,13 @@ export default function ProjectsPage() {
                   View on GitHub →
                 </a>
 
-              </div>
+              </motion.div>
             )
           })}
         </div>
 
       </div>
     </div>
+    </>
   )
 }
