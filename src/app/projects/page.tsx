@@ -3,6 +3,10 @@
 import Navbar from "@/components/Navbar"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
+import Masonry from "react-masonry-css"
+import ProjectsLoader from "@/components/ProjectsLoader"
+
+
 import {
   FaNetworkWired,
   FaChartLine,
@@ -30,90 +34,107 @@ const icons: Record<string, any> = {
   FaKey
 }
 
+const breakpointColumnsObj = {
+  default: 3,
+  1024: 2,
+  640: 1
+}
+
 export default function ProjectsPage() {
+
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("/api/projects")
-      .then((res) => res.json())
-      .then((data) => {
-        setProjects(data)
-        setLoading(false)
-      })
+        .then((res) => res.json())
+        .then((data) => {
+          setProjects(data)
+          setLoading(false)
+        })
   }, [])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        Loading projects...
-      </div>
-    )
-  }
-  const projectBaseDelayTime = 0.3;
+  if (loading) return <ProjectsLoader loading={loading} />
+
+
+  const projectBaseDelayTime = 0.15
+
   return (
-    <>
-    <Navbar/>
-    <div className="bg-black text-white px-6 py-16">
-      <div className="max-w-6xl mx-auto">
+      <main className="bg-[#0A0F13de] min-h-screen">
+        <Navbar />
 
-        <motion.h1 
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-4xl font-bold mb-12 text-center">
-          My Projects
-        </motion.h1>
+        <div className="bg-blend-hue text-white px-6 py-16">
+          <div className="max-w-6xl mx-auto">
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => {
-            const Icon = icons[project.icon] || FaServer
-            const techs = JSON.parse(project.technologies)
-            
-            return (
-              <motion.div
+            <motion.h1
                 initial={{ opacity: 0, y: -40 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.1 , delay: projectBaseDelayTime * index}}
-                key={project.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-green-500 transition"
-              >
+                transition={{ duration: 0.8 }}
+                className="text-4xl font-bold mb-12 text-center"
+            >
+              My Projects
+            </motion.h1>
 
-                <h2 className="text-xl font-semibold mb-3 flex items-center gap-3">
-                  <Icon className="text-green-400 text-lg" />
-                  {project.title}
-                </h2>
+            <Masonry
+                breakpointCols={breakpointColumnsObj}
+                className="flex gap-8"
+                columnClassName="flex flex-col gap-8"
+            >
 
-                <p className="text-gray-400 mb-4">
-                  {project.description}
-                </p>
+              {projects.map((project, index) => {
 
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {techs.map((tech: string, index: number) => (
-                    <span
-                      key={index}
-                      className="text-sm bg-green-500/10 text-green-400 px-2 py-1 rounded"
+                const Icon = icons[project.icon] || FaServer
+                const techs = JSON.parse(project.technologies)
+
+                return (
+                    <motion.div
+                        key={project.id}
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: projectBaseDelayTime * index
+                        }}
+                        whileHover={{ scale: 1.03 }}
+                        className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-green-500 transition"
                     >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
 
-                <a
-                  href={project.github}
-                  target="_blank"
-                  className="text-green-400 hover:text-green-300"
-                >
-                  View on GitHub →
-                </a>
+                      <h2 className="text-xl font-semibold mb-3 flex items-center gap-3">
+                        <Icon className="text-green-400 text-lg" />
+                        {project.title}
+                      </h2>
 
-              </motion.div>
-            )
-          })}
+                      <p className="text-gray-400 mb-4">
+                        {project.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {techs.map((tech: string, i: number) => (
+                            <span
+                                key={i}
+                                className="text-sm bg-green-500/10 text-green-400 px-2 py-1 rounded"
+                            >
+                        {tech}
+                      </span>
+                        ))}
+                      </div>
+
+                      <a
+                          href={project.github}
+                          target="_blank"
+                          className="text-green-400 hover:text-green-300"
+                      >
+                        View on GitHub →
+                      </a>
+
+                    </motion.div>
+                )
+              })}
+
+            </Masonry>
+
+          </div>
         </div>
-
-      </div>
-    </div>
-    </>
+      </main>
   )
 }

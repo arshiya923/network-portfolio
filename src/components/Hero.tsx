@@ -1,54 +1,113 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { FaGithub, FaLinkedin } from "react-icons/fa"
+import Image from "next/image"
+import Particles from "@tsparticles/react"
+import { loadSlim } from "@tsparticles/slim"
+import { useCallback } from "react"
 
 export default function Hero() {
-  return (
-    <section className="flex flex-col items-center text-center py-28">
 
-      <motion.h1
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-5xl font-bold"
-      >
-        Network Automation Engineer
-      </motion.h1>
+    const particlesInit = useCallback(async (engine: any) => {
+        await loadSlim(engine)
+    }, [])
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="text-gray-400 mt-6 max-w-xl"
-      >
-        I build automation tools and software for modern network
-        infrastructure using Python, Linux and DevOps technologies.
-      </motion.p>
+    return (
+        <section className="relative flex items-center justify-center overflow-hidden h-[420px]">
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="flex gap-6 mt-10"
-      >
-        <a
-          href="https://github.com"
-          className="flex items-center gap-2 bg-green-500 px-6 py-2 rounded-lg text-black"
-        >
-          <FaGithub size={18} />
-          GitHub
-        </a>
+            {/* particles background */}
+            <Particles
+                id="tsparticles"
+                init={particlesInit}
+                className="absolute inset-0"
+                options={{
+                    background: { color: "transparent" },
 
-        <a
-          href="https://linkedin.com"
-          className="flex items-center gap-2 border border-gray-600 px-6 py-2 rounded-lg"
-        >
-          <FaLinkedin size={18} />
-          LinkedIn
-        </a>
-      </motion.div>
+                    particles: {
+                        number: { value: 70 },
 
-    </section>
-  )
+                        color: { value: "#22c55e" },
+
+                        links: {
+                            enable: true,
+                            color: "#22c55e",
+                            distance: 150,
+                            opacity: 0.25,
+                            width: 1
+                        },
+
+                        move: {
+                            enable: true,
+                            speed: 1
+                        },
+
+                        opacity: { value: 0.35 },
+
+                        size: { value: { min: 1, max: 3 } }
+                    }
+                }}
+            />
+
+            <div className="relative flex items-center gap-14 z-10">
+
+                {/* Avatar */}
+                <div className="relative flex items-center justify-center">
+
+                    {/* ring 1 */}
+                    <motion.div
+                        animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
+                        transition={{ duration: 3, repeat: Infinity }}
+                        className="absolute w-44 h-44 border border-green-500 rounded-full"
+                    />
+
+                    {/* ring 2 */}
+                    <motion.div
+                        animate={{ scale: [1, 1.8, 1], opacity: [0.4, 0, 0.4] }}
+                        transition={{ duration: 4, repeat: Infinity }}
+                        className="absolute w-44 h-44 border border-emerald-400 rounded-full"
+                    />
+
+                    {/* avatar frame */}
+                    <div className="p-[3px] rounded-full bg-gradient-to-r from-green-400 via-green-500 to-emerald-400 shadow-[0_0_30px_rgba(34,197,94,0.6)]">
+
+                        <div className="bg-black rounded-full p-1">
+
+                            <Image
+                                src="/avatar.jpg"
+                                alt="avatar"
+                                width={220}
+                                height={220}
+                                className="rounded-full"
+                                priority
+                            />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* text */}
+                <div className="max-w-xl">
+
+                    <h1 className="text-5xl font-bold text-green-400 leading-tight drop-shadow-[0_0_15px_rgba(34,197,94,0.9)]">
+                        Full Stack
+                        <br />
+                        Network Engineer
+                    </h1>
+
+                    {/* neon divider */}
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.5 }}
+                        className="h-[3px] mt-5 bg-gradient-to-r from-green-400 via-green-500 to-emerald-400 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.8)]"
+                    />
+
+                </div>
+
+            </div>
+
+        </section>
+    )
 }

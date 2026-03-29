@@ -20,7 +20,10 @@
 }
 
 body {
-  background: var(--background);
+  background-color: #000000E4;
+  background-image: url("/pattern.svg");
+  background-repeat: repeat;
+
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-mono), serif;
 }
