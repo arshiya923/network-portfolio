@@ -4,21 +4,20 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import Particles from "@tsparticles/react"
 import { loadSlim } from "@tsparticles/slim"
-import { useCallback } from "react"
+import { useEffect } from "react"
+import { tsParticles } from "@tsparticles/engine"
 
 export default function Hero() {
 
-    const particlesInit = useCallback(async (engine: any) => {
-        await loadSlim(engine)
+    useEffect(() => {
+        loadSlim(tsParticles)
     }, [])
 
     return (
         <section className="relative flex items-center justify-center overflow-hidden h-[420px]">
 
-            {/* particles background */}
             <Particles
                 id="tsparticles"
-                init={particlesInit}
                 className="absolute inset-0"
                 options={{
                     background: { color: "transparent" },
