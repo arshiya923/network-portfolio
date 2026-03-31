@@ -3,7 +3,20 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { motion, useAnimationFrame, useMotionValue } from "framer-motion"
 import type { IconType } from "react-icons"
-import { SiCisco, SiLinux, SiNextdotjs, SiReact } from "react-icons/si"
+import {
+    SiCisco,
+    SiDocker,
+    SiGit,
+    SiJavascript,
+    SiLinux,
+    SiMysql,
+    SiNextdotjs,
+    SiNodedotjs,
+    SiPython,
+    SiReact,
+    SiTailwindcss,
+    SiTypescript,
+} from "react-icons/si"
 
 export type SkillCard = {
     name: string
@@ -40,6 +53,16 @@ const iconMap: Record<string, IconType> = {
     "next.js": SiNextdotjs,
     linux: SiLinux,
     cisco: SiCisco,
+    typescript: SiTypescript,
+    javascript: SiJavascript,
+    tailwind: SiTailwindcss,
+    "tailwind css": SiTailwindcss,
+    nodejs: SiNodedotjs,
+    "node.js": SiNodedotjs,
+    mysql: SiMysql,
+    git: SiGit,
+    docker: SiDocker,
+    python: SiPython,
 }
 
 const accentMap: Record<string, string> = {
@@ -48,6 +71,16 @@ const accentMap: Record<string, string> = {
     "next.js": "text-fuchsia-400",
     linux: "text-sky-400",
     cisco: "text-violet-400",
+    typescript: "text-blue-400",
+    javascript: "text-yellow-300",
+    tailwind: "text-cyan-300",
+    "tailwind css": "text-cyan-300",
+    nodejs: "text-green-400",
+    "node.js": "text-green-400",
+    mysql: "text-sky-400",
+    git: "text-orange-400",
+    docker: "text-blue-500",
+    python: "text-yellow-400",
 }
 
 function SkillSkeletonCard({ index }: { index: number }) {
