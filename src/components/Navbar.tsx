@@ -10,9 +10,14 @@ export default function Navbar() {
       <div className="flex gap-6 text-gray-300">
         <Link href="/">Home</Link>
         <Link href="/projects">Projects</Link>
-        <Link href="/about">About</Link>
-        <Link href="/contact">Contact</Link>
       </div>
     </nav>
   )
 }
+
+/*
+
+<Link href="/about">About</Link>
+<Link href="/contact">Contact</Link>
+
+*/

@@ -1,9 +1,8 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { animate, motion, useAnimationFrame, useMotionValue } from "framer-motion"
+import { motion, useAnimationFrame, useMotionValue } from "framer-motion"
 import type { IconType } from "react-icons"
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi"
 import { SiCisco, SiLinux, SiNextdotjs, SiReact } from "react-icons/si"
 
 type SkillCard = {
@@ -39,8 +38,7 @@ export default function Skills() {
     const viewportRef = useRef<HTMLDivElement>(null)
     const trackRef = useRef<HTMLDivElement>(null)
     const autoScrollPausedRef = useRef(false)
-    const manualAnimatingRef = useRef(false)
-    const manualAnimationRef = useRef<ReturnType<typeof animate> | null>(null)
+    const dragStartOffsetRef = useRef(0)
     const offsetRef = useRef(0)
     const activeIndexRef = useRef(0)
     const x = useMotionValue(0)
@@ -49,7 +47,7 @@ export default function Skills() {
     const [cardSpan, setCardSpan] = useState(0)
     const [shineTick, setShineTick] = useState(0)
     const [activeIndex, setActiveIndex] = useState(0)
-    const loopedSkills = useMemo(() => [...skills, ...skills], [])
+    const loopedSkills = useMemo(() => [...skills, ...skills, ...skills], [])
 
     useEffect(() => {
         const track = trackRef.current
@@ -77,6 +75,15 @@ export default function Skills() {
     }, [])
 
     useEffect(() => {
+        if (!singleSetWidth) {
+            return
+        }
+
+        offsetRef.current = singleSetWidth
+        x.set(-singleSetWidth)
+    }, [singleSetWidth, x])
+
+    useEffect(() => {
         const interval = window.setInterval(() => {
             setShineTick((value) => value + 1)
         }, 1500)
@@ -85,16 +92,16 @@ export default function Skills() {
     }, [])
 
     useAnimationFrame((_, delta) => {
-        if (autoScrollPausedRef.current || manualAnimatingRef.current || !singleSetWidth) {
+        if (autoScrollPausedRef.current || !singleSetWidth) {
             return
         }
 
         const speed = 0.035
         offsetRef.current += delta * speed * direction
 
-        if (offsetRef.current >= singleSetWidth) {
+        if (offsetRef.current >= singleSetWidth * 2) {
             offsetRef.current -= singleSetWidth
-        } else if (offsetRef.current < 0) {
+        } else if (offsetRef.current < singleSetWidth) {
             offsetRef.current += singleSetWidth
         }
 
@@ -104,7 +111,7 @@ export default function Skills() {
             const viewportCenter = viewportRef.current.offsetWidth / 2
             const centered = (offsetRef.current + viewportCenter - cardSpan / 2) / cardSpan
             const nearestIndex = Math.round(centered)
-            const normalizedIndex = ((nearestIndex % loopedSkills.length) + loopedSkills.length) % loopedSkills.length
+            const normalizedIndex = ((nearestIndex % skills.length) + skills.length) % skills.length
 
             if (activeIndexRef.current !== normalizedIndex) {
                 activeIndexRef.current = normalizedIndex
@@ -113,70 +120,9 @@ export default function Skills() {
         }
     })
 
-    const moveByItem = (stepDirection: 1 | -1) => {
-        if (!cardSpan || !singleSetWidth) {
-            return
-        }
-
-        manualAnimationRef.current?.stop()
-        manualAnimatingRef.current = true
-
-        const startOffset = offsetRef.current
-        let targetOffset = startOffset + cardSpan * stepDirection
-
-        if (targetOffset >= singleSetWidth) {
-            targetOffset -= singleSetWidth
-        } else if (targetOffset < 0) {
-            targetOffset += singleSetWidth
-        }
-
-        manualAnimationRef.current = animate(startOffset, targetOffset, {
-            duration: 0.45,
-            ease: "easeInOut",
-            onUpdate: (value) => {
-                offsetRef.current = value
-                x.set(-value)
-            },
-            onComplete: () => {
-                offsetRef.current = targetOffset
-                x.set(-targetOffset)
-                manualAnimatingRef.current = false
-            },
-        })
-    }
-
     return (
-        <section className="px-6 py-12">
-            <div className="max-w-6xl mx-auto rounded-[32px] border border-green-500/20 bg-white/5 px-6 py-8 shadow-[0_0_20px_rgba(34,197,94,0.15)] backdrop-blur-md md:px-10 md:py-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.4 }}
-                    transition={{ duration: 0.45, ease: "easeOut" }}
-                    className="mb-8 flex items-center justify-between gap-4"
-                >
-                    <h2 className="text-3xl font-bold text-green-400">Skills</h2>
-
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            aria-label="Previous skill"
-                            onClick={() => moveByItem(-1)}
-                            className="flex h-11 w-11 items-center justify-center rounded-full border border-green-500/30 bg-green-500/10 text-green-400 transition hover:bg-green-500/20"
-                        >
-                            <FiChevronLeft className="text-xl" />
-                        </button>
-                        <button
-                            type="button"
-                            aria-label="Next skill"
-                            onClick={() => moveByItem(1)}
-                            className="flex h-11 w-11 items-center justify-center rounded-full border border-green-500/30 bg-green-500/10 text-green-400 transition hover:bg-green-500/20"
-                        >
-                            <FiChevronRight className="text-xl" />
-                        </button>
-                    </div>
-                </motion.div>
-
+        <section className="px-6">
+            <div className="max-w-6xl mx-auto px-6 md:px-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -189,18 +135,54 @@ export default function Skills() {
 
                     <div
                         ref={viewportRef}
-                        className="overflow-x-hidden overflow-y-visible px-2 pb-5 pt-4"
-                        onMouseEnter={() => {
-                            autoScrollPausedRef.current = true
-                        }}
-                        onMouseLeave={() => {
-                            autoScrollPausedRef.current = false
-                        }}
+                        className="overflow-x-hidden overflow-y-visible px-2 pb-5 pt-4 cursor-grab active:cursor-grabbing touch-pan-y"
                     >
                         <motion.div
                             style={{ x }}
                             ref={trackRef}
                             className="flex w-max gap-4"
+                            onPanStart={() => {
+                                autoScrollPausedRef.current = true
+                                dragStartOffsetRef.current = offsetRef.current
+                            }}
+                            onPan={(_, info) => {
+                                if (!singleSetWidth) {
+                                    return
+                                }
+
+                                let nextOffset = dragStartOffsetRef.current - info.offset.x
+
+                                while (nextOffset >= singleSetWidth * 2) {
+                                    nextOffset -= singleSetWidth
+                                }
+
+                                while (nextOffset < singleSetWidth) {
+                                    nextOffset += singleSetWidth
+                                }
+
+                                offsetRef.current = nextOffset
+                                x.set(-nextOffset)
+                            }}
+                            onPanEnd={(_, info) => {
+                                if (!singleSetWidth) {
+                                    autoScrollPausedRef.current = false
+                                    return
+                                }
+
+                                let nextOffset = offsetRef.current
+
+                                while (nextOffset >= singleSetWidth * 2) {
+                                    nextOffset -= singleSetWidth
+                                }
+
+                                while (nextOffset < singleSetWidth) {
+                                    nextOffset += singleSetWidth
+                                }
+
+                                offsetRef.current = nextOffset
+                                x.set(-nextOffset)
+                                autoScrollPausedRef.current = false
+                            }}
                         >
                             {loopedSkills.map(({ name, icon: Icon, accent }, index) => (
                                 <motion.div
@@ -214,11 +196,11 @@ export default function Skills() {
                                         delay: (index % skills.length) * 0.06,
                                     }}
                                     animate={{
-                                        scale: index === activeIndex ? 1.06 : 1,
-                                        y: index === activeIndex ? -4 : 0,
+                                        scale: index % skills.length === activeIndex ? 1.06 : 1,
+                                        y: index % skills.length === activeIndex ? -4 : 0,
                                     }}
                                     className={`group relative flex min-w-[220px] shrink-0 items-center gap-3 overflow-hidden rounded-[28px] border bg-[linear-gradient(135deg,rgba(8,20,14,0.96),rgba(10,35,22,0.86))] px-4 py-5 transition duration-300 hover:-translate-y-1 md:min-w-[245px] ${
-                                        index === activeIndex
+                                        index % skills.length === activeIndex
                                             ? "border-green-300/50"
                                             : "border-white/10 hover:border-green-400/30"
                                     }`}
