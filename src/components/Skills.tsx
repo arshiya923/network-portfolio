@@ -5,36 +5,75 @@ import { motion, useAnimationFrame, useMotionValue } from "framer-motion"
 import type { IconType } from "react-icons"
 import { SiCisco, SiLinux, SiNextdotjs, SiReact } from "react-icons/si"
 
-type SkillCard = {
+export type SkillCard = {
     name: string
-    icon: IconType
-    accent: string
+    icon?: string | null
+    accent?: string | null
 }
 
-const skills: SkillCard[] = [
+export const defaultSkills: SkillCard[] = [
     {
         name: "React",
-        icon: SiReact,
+        icon: "react",
         accent: "text-cyan-400",
     },
     {
         name: "Next.js",
-        icon: SiNextdotjs,
+        icon: "nextjs",
         accent: "text-fuchsia-400",
     },
     {
         name: "Linux",
-        icon: SiLinux,
+        icon: "linux",
         accent: "text-sky-400",
     },
     {
         name: "Cisco",
-        icon: SiCisco,
+        icon: "cisco",
         accent: "text-violet-400",
     }
 ]
 
-export default function Skills() {
+const iconMap: Record<string, IconType> = {
+    react: SiReact,
+    nextjs: SiNextdotjs,
+    "next.js": SiNextdotjs,
+    linux: SiLinux,
+    cisco: SiCisco,
+}
+
+const accentMap: Record<string, string> = {
+    react: "text-cyan-400",
+    nextjs: "text-fuchsia-400",
+    "next.js": "text-fuchsia-400",
+    linux: "text-sky-400",
+    cisco: "text-violet-400",
+}
+
+function SkillSkeletonCard({ index }: { index: number }) {
+    return (
+        <div
+            className="relative flex min-w-[220px] shrink-0 items-center gap-3 overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(8,20,14,0.96),rgba(10,35,22,0.86))] px-4 py-5 md:min-w-[245px]"
+        >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.08),transparent_38%)] opacity-80" />
+            <div className="relative h-16 w-16 shrink-0 rounded-2xl border border-green-400/10 bg-white/6 animate-pulse" />
+            <div className="relative min-w-0 flex-1">
+                <div className="mb-2 h-2 w-20 rounded-full bg-white/8 animate-pulse" />
+                <div className="h-5 w-24 rounded-full bg-white/10 animate-pulse" />
+                <div className="mt-3 h-[2px] w-16 rounded-full bg-gradient-to-r from-white/20 to-transparent" />
+            </div>
+            <span className="sr-only">Loading skill {index + 1}</span>
+        </div>
+    )
+}
+
+export default function Skills({
+    initialSkills,
+    showSkeleton = false
+}: {
+    initialSkills: SkillCard[]
+    showSkeleton?: boolean
+}) {
     const viewportRef = useRef<HTMLDivElement>(null)
     const trackRef = useRef<HTMLDivElement>(null)
     const autoScrollPausedRef = useRef(false)
@@ -42,12 +81,14 @@ export default function Skills() {
     const offsetRef = useRef(0)
     const activeIndexRef = useRef(0)
     const x = useMotionValue(0)
-    const [direction, setDirection] = useState<1 | -1>(1)
+    const direction = 1
     const [singleSetWidth, setSingleSetWidth] = useState(0)
     const [cardSpan, setCardSpan] = useState(0)
     const [shineTick, setShineTick] = useState(0)
     const [activeIndex, setActiveIndex] = useState(0)
+    const skills = initialSkills.length > 0 ? initialSkills : defaultSkills
     const loopedSkills = useMemo(() => [...skills, ...skills, ...skills], [])
+    const skeletonItems = useMemo(() => Array.from({ length: 4 }), [])
 
     useEffect(() => {
         const track = trackRef.current
@@ -123,6 +164,15 @@ export default function Skills() {
     return (
         <section className="px-6">
             <div className="max-w-6xl mx-auto px-6 md:px-10">
+                {showSkeleton ? (
+                    <div className="overflow-x-hidden overflow-y-visible px-2 pb-5 pt-4">
+                        <div className="flex w-max gap-4">
+                            {skeletonItems.map((_, index) => (
+                                <SkillSkeletonCard key={index} index={index} />
+                            ))}
+                        </div>
+                    </div>
+                ) : (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -163,7 +213,7 @@ export default function Skills() {
                                 offsetRef.current = nextOffset
                                 x.set(-nextOffset)
                             }}
-                            onPanEnd={(_, info) => {
+                            onPanEnd={() => {
                                 if (!singleSetWidth) {
                                     autoScrollPausedRef.current = false
                                     return
@@ -184,7 +234,12 @@ export default function Skills() {
                                 autoScrollPausedRef.current = false
                             }}
                         >
-                            {loopedSkills.map(({ name, icon: Icon, accent }, index) => (
+                            {loopedSkills.map(({ name, icon, accent }, index) => {
+                                const iconKey = (icon ?? name).toLowerCase()
+                                const Icon = iconMap[iconKey] ?? SiReact
+                                const accentClass = accent ?? accentMap[iconKey] ?? "text-green-400"
+
+                                return (
                                 <motion.div
                                     key={`${name}-${index}`}
                                     initial={{ opacity: 0, y: 16 }}
@@ -214,7 +269,7 @@ export default function Skills() {
                                             transition={{ duration: 0.7, ease: "easeInOut" }}
                                             className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.28)_50%,transparent_80%)]"
                                         />
-                                        <Icon className={`relative text-4xl ${accent}`} />
+                                        <Icon className={`relative text-4xl ${accentClass}`} />
                                     </div>
                                     <div className="relative min-w-0 flex-1">
                                         <p className="mb-1 text-[0.7rem] font-medium uppercase tracking-[0.28em] text-green-500/70">
@@ -226,10 +281,12 @@ export default function Skills() {
                                         <div className="mt-3 h-[2px] w-16 rounded-full bg-gradient-to-r from-green-400 via-emerald-300 to-transparent" />
                                     </div>
                                 </motion.div>
-                            ))}
+                                )
+                            })}
                         </motion.div>
                     </div>
                 </motion.div>
+                )}
             </div>
         </section>
     )
