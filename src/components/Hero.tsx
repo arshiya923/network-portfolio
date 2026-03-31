@@ -67,7 +67,8 @@ export default function Hero() {
                                 alt="avatar"
                                 width={220}
                                 height={220}
-                                className="rounded-full p-1.5"
+                                className="rounded-full p-1.5 select-none"
+                                draggable={false}
                                 priority
                             />
 

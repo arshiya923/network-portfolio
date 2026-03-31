@@ -4,6 +4,8 @@ import LatestProjects from "@/components/LatestProjects";
 import Skills, { defaultSkills, type SkillCard } from "@/components/Skills";
 import db from "@/lib/db";
 
+export const dynamic = "force-dynamic"
+
 type SkillRow = {
   id?: number
   name?: string | null

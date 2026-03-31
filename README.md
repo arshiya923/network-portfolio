@@ -20,6 +20,40 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Docker
+
+Build and run the app with Docker:
+
+```bash
+docker compose up --build
+```
+
+The app will be available at `http://localhost:3000`.
+
+Docker Compose also starts a MySQL container on `localhost:3306`.
+
+Default database credentials in `docker-compose.yml`:
+
+```txt
+DB_HOST=db
+DB_NAME=portfolio
+DB_USER=root
+DB_PASSWORD=rootpassword
+MYSQL_ROOT_PASSWORD=rootpassword
+```
+
+The database is initialized automatically from:
+
+- `docker/mysql/init/01-projects.sql`
+- `docker/mysql/init/02-skills.sql`
+
+If you change MySQL users/passwords after the volume already exists, reset the DB volume so MySQL can reinitialize:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

@@ -86,7 +86,7 @@ const accentMap: Record<string, string> = {
 function SkillSkeletonCard({ index }: { index: number }) {
     return (
         <div
-            className="relative flex min-w-[220px] shrink-0 items-center gap-3 overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(8,20,14,0.96),rgba(10,35,22,0.86))] px-4 py-5 md:min-w-[245px]"
+            className="relative flex min-w-[220px] shrink-0 select-none items-center gap-3 overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(8,20,14,0.96),rgba(10,35,22,0.86))] px-4 py-5 md:min-w-[245px]"
         >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.08),transparent_38%)] opacity-80" />
             <div className="relative h-16 w-16 shrink-0 rounded-2xl border border-green-400/10 bg-white/6 animate-pulse" />
@@ -218,7 +218,7 @@ export default function Skills({
 
                     <div
                         ref={viewportRef}
-                        className="overflow-x-hidden overflow-y-visible px-2 pb-5 pt-4 cursor-grab active:cursor-grabbing touch-pan-y"
+                        className="overflow-x-hidden overflow-y-visible px-2 pb-5 pt-4 cursor-grab select-none active:cursor-grabbing touch-pan-y"
                     >
                         <motion.div
                             style={{ x }}
@@ -287,7 +287,7 @@ export default function Skills({
                                         scale: index % skills.length === activeIndex ? 1.06 : 1,
                                         y: index % skills.length === activeIndex ? -4 : 0,
                                     }}
-                                    className={`group relative flex min-w-[220px] shrink-0 items-center gap-3 overflow-hidden rounded-[28px] border bg-[linear-gradient(135deg,rgba(8,20,14,0.96),rgba(10,35,22,0.86))] px-4 py-5 transition duration-300 hover:-translate-y-1 md:min-w-[245px] ${
+                                    className={`group relative flex min-w-[220px] shrink-0 select-none items-center gap-3 overflow-hidden rounded-[28px] border bg-[linear-gradient(135deg,rgba(8,20,14,0.96),rgba(10,35,22,0.86))] px-4 py-5 transition duration-300 hover:-translate-y-1 md:min-w-[245px] ${
                                         index % skills.length === activeIndex
                                             ? "border-green-300/50"
                                             : "border-white/10 hover:border-green-400/30"
